@@ -1,0 +1,9 @@
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+pymilvus>=2.4.4
+sentence-transformers>=3.1.1
+torch>=2.3.0
+numpy>=1.26.4
+PyMuPDF>=1.24.9
+python-docx>=1.1.2
+pydantic>=2.8.2

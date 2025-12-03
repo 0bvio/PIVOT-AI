@@ -79,10 +79,8 @@ build/
 *.sqlite
 *.db
 .vagrant/
-*.pem
 
 # If any large logs or runtime files accidentally tracked, add their patterns here
 # Example: LOG, LOG.old
 LOG
 LOG.old*
-
