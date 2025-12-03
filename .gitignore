@@ -1,0 +1,88 @@
+# --- OS, editors, python envs
+.DS_Store
+*.swp
+*.swo
+*.bak
+*.log
+*.pyc
+__pycache__/
+.venv/
+venv/
+env/
+.idea/
+.vscode/
+
+# --- Private keys / credentials (do NOT commit)
+client_privatekey
+client_publickey
+server_privatekey
+server_publickey
+**/id_ed25519
+**/id_ed25519.pub
+*.pem
+*.key
+*.pub
+*.crt
+.env
+.env.*
+
+# --- Large models, model caches, runtime data
+models/
+**/models/
+**/*.safetensors
+**/*.ckpt
+**/*.pt
+**/*.bin
+**/*.model
+**/*.tar.gz
+**/*.zip
+
+# Ollama runtime & model cache
+ollama/models/
+ollama/history
+ollama/id_ed25519
+ollama/id_ed25519.pub
+
+# Open WebUI caches and DB
+openwebui/cache/
+openwebui/webui.db
+openwebui/cache/**
+
+# Milvus runtime data and DBs
+milvus/db/
+milvus/etcd/
+milvus/minio/
+milvus/rdb_data/
+milvus/rdb_data_meta_kv/
+
+# MinIO, etc data
+minio/
+
+# Data directories (raw files, processed outputs) - keep folder but not contents
+data/raw/
+data/processed/
+
+# Uploads and user-submitted files
+uploads/
+openwebui/uploads/
+
+# Agent / runtime data
+agent-data/
+cache/
+
+# Python packaging / build artifacts
+dist/
+build/
+*.egg-info/
+
+# Misc
+*.sqlite
+*.db
+.vagrant/
+*.pem
+
+# If any large logs or runtime files accidentally tracked, add their patterns here
+# Example: LOG, LOG.old
+LOG
+LOG.old*
+
