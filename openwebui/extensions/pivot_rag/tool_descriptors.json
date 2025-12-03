@@ -1,0 +1,32 @@
+{
+  "tools": [
+    {
+      "id": "pivot_rag_search",
+      "name": "Pivot RAG Search",
+      "description": "Fetches reranked context from Milvus via Pivot RAG service.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": {"type": "string"},
+          "top_k": {"type": "integer", "default": 25},
+          "logical_collection": {"type": "string", "default": "My_Project_History"}
+        },
+        "required": ["query"]
+      }
+    },
+    {
+      "id": "pivot_rag_ingest_scan",
+      "name": "Pivot RAG Ingest Scan",
+      "description": "Trigger ingestion scan on the Pivot RAG service.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "base_dir": {"type": "string", "default": "/data/raw"},
+          "pattern": {"type": "string", "default": "**/*"},
+          "logical_collection": {"type": "string", "default": "My_Project_History"}
+        }
+      }
+    }
+  ]
+}
+

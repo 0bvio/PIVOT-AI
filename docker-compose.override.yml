@@ -1,0 +1,31 @@
+services:
+  open-webui:
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - VECTOR_DB=milvus
+      - MILVUS_URI=http://milvus:19530
+      - RAG_EMBEDDING_MODEL=BAAI/bge-large-en
+      - ENABLE_RAG_WEB_SEARCH=False
+      - DOC_PROCESSING_TYPE=none
+      - RAG_TOP_K=25
+      - ENABLE_EXTENSIONS=true
+      - PIVOT_RAG_BASE_URL=http://rag-service:8000
+      - PIVOT_RAG_LOGICAL_COLLECTION=My_Project_History
+
+  rag-service:
+    build: ./rag_service
+    container_name: pivot_ai_rag_service
+    restart: always
+    environment:
+      - MILVUS_URI=http://milvus:19530
+      - EMBEDDING_MODEL=BAAI/bge-large-en
+      - RERANKER_MODEL=BAAI/bge-reranker-v2-m3
+      - CHUNK_SIZE=2048
+      - CHUNK_OVERLAP=200
+      - DEFAULT_LOGICAL_COLLECTION=My_Project_History
+    ports:
+      - "8000:8000"
+    depends_on:
+      - milvus
+    volumes:
+      - ./data:/data:ro

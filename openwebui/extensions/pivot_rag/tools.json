@@ -1,0 +1,32 @@
+{
+  "tools": [
+    {
+      "id": "pivot_rag_search",
+      "name": "Pivot RAG Search",
+      "description": "Fetches reranked context from Milvus via Pivot RAG service.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": {"type": "string", "description": "User query to search."},
+          "top_k": {"type": "integer", "description": "Top-K vector results before rerank.", "default": 25},
+          "logical_collection": {"type": "string", "description": "Logical collection filter.", "default": "My_Project_History"}
+        },
+        "required": ["query"]
+      }
+    },
+    {
+      "id": "pivot_rag_ingest_scan",
+      "name": "Pivot RAG Ingest Scan",
+      "description": "Trigger ingestion scan on the Pivot RAG service.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "base_dir": {"type": "string", "description": "Base directory inside rag-service (default /data/raw).", "default": "/data/raw"},
+          "pattern": {"type": "string", "description": "Glob pattern to match files.", "default": "**/*"},
+          "logical_collection": {"type": "string", "description": "Logical collection name.", "default": "My_Project_History"}
+        }
+      }
+    }
+  ]
+}
+

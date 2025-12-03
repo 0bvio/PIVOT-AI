@@ -1,0 +1,143 @@
+services:
+  # -----------------------------
+  # INFERENCE ENGINE (Ollama)
+  # -----------------------------
+  ollama:
+    image: ollama/ollama:latest
+    container_name: pivot_ai_ollama
+    restart: always
+    tty: true
+    ports:
+      - "11434:11434"
+    volumes:
+      - ./ollama:/root/.ollama
+    environment:
+      - OLLAMA_KEEP_ALIVE=-1
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  # -----------------------------
+  # VECTOR DATABASE (Milvus Standalone)
+  # -----------------------------
+  etcd:
+    container_name: pivot_ai_milvus_etcd
+    image: quay.io/coreos/etcd:v3.5.5
+    environment:
+      - ETCD_AUTO_COMPACTION_MODE=revision
+      - ETCD_AUTO_COMPACTION_RETENTION=1000
+      - ETCD_QUOTA_BACKEND_BYTES=4294967296
+      - ETCD_SNAPSHOT_COUNT=50000
+    volumes:
+      - ./milvus/etcd:/etcd
+    command: etcd -advertise-client-urls=http://127.0.0.1:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir /etcd
+
+  minio:
+    container_name: pivot_ai_milvus_minio
+    image: minio/minio:RELEASE.2023-03-20T20-16-18Z
+    environment:
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+    ports:
+      - "9001:9001"
+      - "9000:9000"
+    volumes:
+      - ./milvus/minio:/minio_data
+    command: minio server /minio_data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  milvus:
+    container_name: pivot_ai_milvus
+    image: milvusdb/milvus:v2.4.0
+    command: ["milvus", "run", "standalone"]
+    environment:
+      ETCD_ENDPOINTS: etcd:2379
+      MINIO_ADDRESS: minio:9000
+    volumes:
+      - ./milvus/db:/var/lib/milvus
+    ports:
+      - "19530:19530"
+      - "9091:9091"
+    depends_on:
+      - "etcd"
+      - "minio"
+    deploy:
+      resources:
+        limits:
+          memory: 24G  # Limiting Milvus so it doesn't eat all system RAM
+
+  # -----------------------------
+  # USER INTERFACE (Open WebUI)
+  # -----------------------------
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: pivot_ai_webui
+    restart: always
+    ports:
+      - "3000:8080"
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      # RAG Configuration
+      - VECTOR_DB=milvus
+      - MILVUS_URI=http://milvus:19530
+      # Use a high-quality embedding model (downloaded automatically by WebUI)
+      - RAG_EMBEDDING_MODEL=BAAI/bge-large-en
+      # Enable RAG features
+      - ENABLE_RAG_WEB_SEARCH=False
+      - DOC_PROCESSING_TYPE=all
+      # CRITICAL FOR "I NEED EVERYTHING"
+      # Increases the number of documents retrieved per query from 5 to 20.
+      # This fills the context window with much more of your history per question.
+      - RAG_TOP_K=25
+    volumes:
+      - ./openwebui:/app/backend/data
+    depends_on:
+      - ollama
+      - milvus
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # 4. VPN GATEWAY (WireGuard for Remote Access)
+  wireguard:
+    image: linuxserver/wireguard # Common, flexible image for VPN setup
+    container_name: ai_wireguard
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      # WARNING: You must fill these placeholders with your actual WireGuard config
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+      - SERVERURL=vpn.yourdomain.com
+      - SERVERPORT=51820
+      - PEERS=1
+      - PEERDNS=auto
+      - INTERNAL_SUBNET=10.13.13.0/24
+    volumes:
+      - wireguard-config:/config
+      - /lib/modules:/lib/modules # Required for kernel module access
+    ports:
+      - "51820:51820/udp" # WireGuard default port
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+      - net.ipv4.ip_forward=1
+    restart: always
+
+volumes:
+  open-webui-data:
+    driver: local
+  milvus-data:
+    driver: local
+  wireguard-config:
+    driver: local
+  ollama-data: # Volume added for Ollama model storage
+    driver: local

@@ -1,0 +1,9 @@
+{
+  "id": "pivot_rag",
+  "name": "Pivot RAG Context Tool",
+  "version": "1.0.0",
+  "description": "Open WebUI extension exposing Pivot RAG tools",
+  "tools_file": "tool_descriptors.json",
+  "entrypoint": "main.py"
+}
+
