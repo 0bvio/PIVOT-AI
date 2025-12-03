@@ -80,6 +80,10 @@ build/
 *.db
 .vagrant/
 
+# Cloudflared tunnel credentials/config (do NOT commit credential JSON)
+cloudflared/
+*.json
+
 # If any large logs or runtime files accidentally tracked, add their patterns here
 # Example: LOG, LOG.old
 LOG
