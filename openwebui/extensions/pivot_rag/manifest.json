@@ -4,5 +4,6 @@
   "version": "1.0.0",
   "description": "Fetches reranked context from the external Pivot RAG service (Milvus + BGE + reranker) and makes it available as a tool inside Open WebUI.",
   "author": "Pivot",
-  "entrypoint": "main.py"
+  "entrypoint": "main.py",
+  "tools": "tool_descriptors.json"
 }

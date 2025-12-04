@@ -3,11 +3,12 @@
     {
       "id": "pivot_rag_search",
       "name": "Pivot RAG Search",
+      "display_name": "Pivot RAG Search",
       "description": "Fetches reranked context from Milvus via Pivot RAG service.",
       "parameters": {
         "type": "object",
         "properties": {
-          "query": {"type": "string"},
+          "query": {"type": "string", "description": "User query to search."},
           "top_k": {"type": "integer", "default": 25},
           "logical_collection": {"type": "string", "default": "My_Project_History"}
         },
@@ -17,6 +18,7 @@
     {
       "id": "pivot_rag_ingest_scan",
       "name": "Pivot RAG Ingest Scan",
+      "display_name": "Pivot RAG Ingest Scan",
       "description": "Trigger ingestion scan on the Pivot RAG service.",
       "parameters": {
         "type": "object",
@@ -29,4 +31,3 @@
     }
   ]
 }
-

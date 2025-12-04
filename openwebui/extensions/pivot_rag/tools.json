@@ -1,8 +1,17 @@
 {
+  "extension": {
+    "id": "pivot_rag",
+    "name": "Pivot RAG Context Tool",
+    "version": "1.0.0",
+    "description": "Pivot RAG tools for Open WebUI",
+    "entrypoint": "main.py",
+    "tools_file": "tool_descriptors.json"
+  },
   "tools": [
     {
       "id": "pivot_rag_search",
       "name": "Pivot RAG Search",
+      "display_name": "Pivot RAG Search",
       "description": "Fetches reranked context from Milvus via Pivot RAG service.",
       "parameters": {
         "type": "object",
@@ -17,6 +26,7 @@
     {
       "id": "pivot_rag_ingest_scan",
       "name": "Pivot RAG Ingest Scan",
+      "display_name": "Pivot RAG Ingest Scan",
       "description": "Trigger ingestion scan on the Pivot RAG service.",
       "parameters": {
         "type": "object",
@@ -29,4 +39,3 @@
     }
   ]
 }
-
