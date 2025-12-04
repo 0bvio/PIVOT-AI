@@ -110,11 +110,18 @@ class Extension:
     """
 
     def __init__(self, ctx):  # ctx is provided by Open WebUI
+        # Simple startup log to help diagnose loading in container logs
+        try:
+            print("[pivot_rag] Extension initializing")
+        except Exception:
+            pass
+
         # Register search tool
         try:
             ctx.register_tool(
                 tool_id="pivot_rag_search",
                 name="Pivot RAG Search",
+                description="Fetches reranked context from Milvus via Pivot RAG service.",
                 desc="Fetches reranked context from Milvus via Pivot RAG service.",
                 func=pivot_rag_search,
                 parameters=
@@ -128,14 +135,19 @@ class Extension:
                     "required": ["query"],
                 },
             )
-        except Exception:
-            pass
+            print("[pivot_rag] Registered tool: pivot_rag_search")
+        except Exception as e:
+            try:
+                print(f"[pivot_rag] Failed to register pivot_rag_search: {e}")
+            except Exception:
+                pass
 
         # Register ingestion tool (optional use)
         try:
             ctx.register_tool(
                 tool_id="pivot_rag_ingest_scan",
                 name="Pivot RAG Ingest Scan",
+                description="Trigger ingestion scan on the Pivot RAG service (scans /data/raw by default).",
                 desc="Trigger ingestion scan on the Pivot RAG service (scans /data/raw by default).",
                 func=pivot_rag_ingest_scan,
                 parameters=
@@ -148,8 +160,12 @@ class Extension:
                     },
                 },
             )
-        except Exception:
-            pass
+            print("[pivot_rag] Registered tool: pivot_rag_ingest_scan")
+        except Exception as e:
+            try:
+                print(f"[pivot_rag] Failed to register pivot_rag_ingest_scan: {e}")
+            except Exception:
+                pass
 
 
 # JSON-serializable tool descriptors for loaders that import metadata without executing

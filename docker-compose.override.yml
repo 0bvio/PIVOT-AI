@@ -9,8 +9,14 @@ services:
       - DOC_PROCESSING_TYPE=none
       - RAG_TOP_K=25
       - ENABLE_EXTENSIONS=true
+      - EXTENSIONS_PATH=/app/backend/extensions
+      - EXTENSIONS_DIR=/app/backend/extensions
       - PIVOT_RAG_BASE_URL=http://rag-service:8000
       - PIVOT_RAG_LOGICAL_COLLECTION=My_Project_History
+      - PIVOT_RAG_TIMEOUT=60
+    volumes:
+      - ./openwebui:/app/backend/data
+      - ./openwebui/extensions:/app/backend/extensions:ro
 
   rag-service:
     build: ./rag_service

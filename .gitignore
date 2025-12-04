@@ -82,7 +82,11 @@ build/
 
 # Cloudflared tunnel credentials/config (do NOT commit credential JSON)
 cloudflared/
-*.json
+# Only ignore JSON under cloudflared (tunnel creds), not globally
+cloudflared/*.json
+
+# Open WebUI secret key (generated at runtime)
+.webui_secret_key
 
 # If any large logs or runtime files accidentally tracked, add their patterns here
 # Example: LOG, LOG.old

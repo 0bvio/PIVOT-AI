@@ -2,9 +2,10 @@
   "tools": [
     {
       "id": "pivot_rag_search",
-      "name": "Pivot RAG Search",
+      "name": "pivot_rag_search",
       "display_name": "Pivot RAG Search",
       "description": "Fetches reranked context from Milvus via Pivot RAG service.",
+      "entrypoint": "main.py:pivot_rag_search",
       "parameters": {
         "type": "object",
         "properties": {
@@ -17,9 +18,10 @@
     },
     {
       "id": "pivot_rag_ingest_scan",
-      "name": "Pivot RAG Ingest Scan",
+      "name": "pivot_rag_ingest_scan",
       "display_name": "Pivot RAG Ingest Scan",
       "description": "Trigger ingestion scan on the Pivot RAG service.",
+      "entrypoint": "main.py:pivot_rag_ingest_scan",
       "parameters": {
         "type": "object",
         "properties": {
