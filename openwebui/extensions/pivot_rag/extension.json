@@ -1,14 +1,17 @@
 {
+  "manifest_version": 1,
   "id": "pivot_rag",
-  "name": "Pivot RAG Context Tool",
+  "name": "pivot_rag",
+  "display_name": "Pivot RAG Context Tool",
   "version": "1.0.0",
-  "description": "Open WebUI extension exposing Pivot RAG tools",
-  "tools_file": "tool_descriptors.json",
-  "entrypoint": "main.py",
+  "description": "Fetches reranked context from the external Pivot RAG service (Milvus + BGE + reranker) and makes it available as a tool inside Open WebUI.",
+  "author": "Pivot",
   "files": [
     "main.py",
-    "manifest.json",
-    "tool_descriptors.json"
+    "tool_descriptors.json",
+    "tools.json",
+    "README.md"
   ],
-  "display_name": "Pivot RAG Context Tool"
+  "entrypoint": "main.py",
+  "tools": ["tool_descriptors.json"]
 }

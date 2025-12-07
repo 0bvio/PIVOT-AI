@@ -1,4 +1,5 @@
 {
+  "manifest_version": 1,
   "id": "pivot_rag",
   "name": "pivot_rag",
   "display_name": "Pivot RAG Context Tool",
@@ -8,8 +9,9 @@
   "files": [
     "main.py",
     "tool_descriptors.json",
+    "tools.json",
     "README.md"
   ],
   "entrypoint": "main.py",
-  "tools": "tool_descriptors.json"
+  "tools": ["tool_descriptors.json"]
 }

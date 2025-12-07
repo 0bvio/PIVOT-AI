@@ -2,6 +2,7 @@
   "extension": {
     "id": "pivot_rag",
     "name": "pivot_rag",
+    "display_name": "Pivot RAG Context Tool",
     "version": "1.0.0",
     "description": "Pivot RAG tools for Open WebUI",
     "entrypoint": "main.py",
@@ -10,7 +11,7 @@
   "tools": [
     {
       "id": "pivot_rag_search",
-      "name": "pivot_rag_search",
+      "name": "Pivot RAG Search",
       "display_name": "Pivot RAG Search",
       "description": "Fetches reranked context from Milvus via Pivot RAG service.",
       "entrypoint": "main.py:pivot_rag_search",
@@ -26,7 +27,7 @@
     },
     {
       "id": "pivot_rag_ingest_scan",
-      "name": "pivot_rag_ingest_scan",
+      "name": "Pivot RAG Ingest Scan",
       "display_name": "Pivot RAG Ingest Scan",
       "description": "Trigger ingestion scan on the Pivot RAG service.",
       "entrypoint": "main.py:pivot_rag_ingest_scan",

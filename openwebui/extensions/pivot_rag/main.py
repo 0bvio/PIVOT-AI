@@ -118,21 +118,23 @@ class Extension:
 
         # Register search tool
         try:
-            ctx.register_tool(
-                tool_id="pivot_rag_search",
-                name="Pivot RAG Search",
-                description="Fetches reranked context from Milvus via Pivot RAG service.",
-                desc="Fetches reranked context from Milvus via Pivot RAG service.",
-                func=pivot_rag_search,
-                parameters=
+            _register_tool_compat(
+                ctx,
                 {
-                    "type": "object",
-                    "properties": {
-                        "query": {"type": "string", "description": "User query to search."},
-                        "top_k": {"type": "integer", "description": "Top-K vector results before rerank.", "default": 25},
-                        "logical_collection": {"type": "string", "description": "Logical collection filter.", "default": DEFAULT_LOGICAL_COLLECTION},
+                    "tool_id": "pivot_rag_search",
+                    "name": "Pivot RAG Search",
+                    "description": "Fetches reranked context from Milvus via Pivot RAG service.",
+                    "desc": "Fetches reranked context from Milvus via Pivot RAG service.",
+                    "func": pivot_rag_search,
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "query": {"type": "string", "description": "User query to search."},
+                            "top_k": {"type": "integer", "description": "Top-K vector results before rerank.", "default": 25},
+                            "logical_collection": {"type": "string", "description": "Logical collection filter.", "default": DEFAULT_LOGICAL_COLLECTION},
+                        },
+                        "required": ["query"],
                     },
-                    "required": ["query"],
                 },
             )
             print("[pivot_rag] Registered tool: pivot_rag_search")
@@ -144,19 +146,21 @@ class Extension:
 
         # Register ingestion tool (optional use)
         try:
-            ctx.register_tool(
-                tool_id="pivot_rag_ingest_scan",
-                name="Pivot RAG Ingest Scan",
-                description="Trigger ingestion scan on the Pivot RAG service (scans /data/raw by default).",
-                desc="Trigger ingestion scan on the Pivot RAG service (scans /data/raw by default).",
-                func=pivot_rag_ingest_scan,
-                parameters=
+            _register_tool_compat(
+                ctx,
                 {
-                    "type": "object",
-                    "properties": {
-                        "base_dir": {"type": "string", "description": "Base directory inside rag-service (default /data/raw)."},
-                        "pattern": {"type": "string", "description": "Glob pattern to match files.", "default": "**/*"},
-                        "logical_collection": {"type": "string", "description": "Logical collection name.", "default": DEFAULT_LOGICAL_COLLECTION},
+                    "tool_id": "pivot_rag_ingest_scan",
+                    "name": "Pivot RAG Ingest Scan",
+                    "description": "Trigger ingestion scan on the Pivot RAG service (scans /data/raw by default).",
+                    "desc": "Trigger ingestion scan on the Pivot RAG service (scans /data/raw by default).",
+                    "func": pivot_rag_ingest_scan,
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "base_dir": {"type": "string", "description": "Base directory inside rag-service (default /data/raw)."},
+                            "pattern": {"type": "string", "description": "Glob pattern to match files.", "default": "**/*"},
+                            "logical_collection": {"type": "string", "description": "Logical collection name.", "default": DEFAULT_LOGICAL_COLLECTION},
+                        },
                     },
                 },
             )
@@ -166,6 +170,39 @@ class Extension:
                 print(f"[pivot_rag] Failed to register pivot_rag_ingest_scan: {e}")
             except Exception:
                 pass
+
+
+def _register_tool_compat(ctx, kwargs: Dict[str, Any]) -> None:
+    """
+    Register a tool across multiple Open WebUI versions by trying
+    several argument signatures:
+    1) Preferred: ctx.register_tool(**kwargs)
+    2) parameters -> schema
+    3) tool_id/id and func/function fallbacks
+    """
+    # Try canonical
+    try:
+        ctx.register_tool(**kwargs)
+        return
+    except Exception as e1:
+        # Try parameters -> schema
+        try:
+            alt = dict(kwargs)
+            if "schema" not in alt and "parameters" in alt:
+                alt["schema"] = alt.pop("parameters")
+            ctx.register_tool(**alt)
+            return
+        except Exception:
+            pass
+        # Try id/function naming
+        alt2 = dict(kwargs)
+        if "id" not in alt2 and "tool_id" in alt2:
+            alt2["id"] = alt2.pop("tool_id")
+        if "function" not in alt2 and "func" in alt2:
+            alt2["function"] = alt2.pop("func")
+        if "schema" not in alt2 and "parameters" in alt2:
+            alt2["schema"] = alt2.pop("parameters")
+        ctx.register_tool(**alt2)
 
 
 # JSON-serializable tool descriptors for loaders that import metadata without executing
